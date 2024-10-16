@@ -1,19 +1,22 @@
 package task
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
 type router struct {
+	controller *controller
+	engine     *gin.Engine
 }
 
-func (r *router) Init(e *gin.Engine) {
-	group := e.Group("/tasks")
-	group.GET("/hello-world", func(c *gin.Context) {
-		c.IndentedJSON(http.StatusOK, gin.H{"message": "Hello world"})
-	})
+func (r *router) Init() {
+	group := r.engine.Group("/tasks")
+	group.GET("/hello-world", r.controller.helloWorld)
 }
 
-var Router router = router{}
+func NewRouter(e *gin.Engine) *router {
+	controller := newController()
+	router := router{controller, e}
+
+	return &router
+}

@@ -8,7 +8,7 @@ import (
 
 func main() {
 	ginRouter := gin.Default()
-	task.Router.Init(ginRouter)
+	task.NewRouter(ginRouter).Init()
 
 	ginRouter.Run("localhost:3000")
 }
