@@ -30,6 +30,16 @@ func (*repository) saveNew(payload CreateRequest) (*Task, error) {
 	return &task, nil
 }
 
+func (r *repository) save(task *Task) (*Task, error) {
+	for index, oldTask := range tasks {
+		if oldTask.ID == task.ID {
+			tasks[index].Description = task.Description
+			return &tasks[index], nil
+		}
+	}
+	return nil, errors.New("task not found")
+}
+
 func NewRepository() *repository {
 	repository := repository{}
 	return &repository

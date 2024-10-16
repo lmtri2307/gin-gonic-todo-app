@@ -25,6 +25,19 @@ func (s *service) Create(payload CreateRequest) (*Task, error) {
 	return task, err
 }
 
+func (s *service) UpdateById(id int, payload UpdateRequest) (*Task, error) {
+	task, err := s.repository.getById(id)
+	if err != nil {
+		return nil, err
+	}
+	task.Description = payload.Description
+	task, err = s.repository.save(task)
+	if err != nil {
+		return nil, err
+	}
+	return task, nil
+}
+
 func NewService() *service {
 	repository := NewRepository()
 	service := service{repository}

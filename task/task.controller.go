@@ -1,7 +1,6 @@
 package task
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -40,13 +39,37 @@ func (c *controller) getById(ctx *gin.Context) {
 func (c *controller) create(ctx *gin.Context) {
 	var createRequest CreateRequest
 	if err := ctx.BindJSON(&createRequest); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.New("invalid task payload").Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task Payload"})
 		return
 	}
 
 	task, err := c.service.Create(createRequest)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errors.New("internal server error"))
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, task)
+}
+
+func (c *controller) updateById(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Id"})
+		return
+	}
+
+	var updateRequest UpdateRequest
+	if err := ctx.BindJSON(&updateRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Update Payload"})
+		return
+	}
+
+	task, err := c.service.UpdateById(id, updateRequest)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 
