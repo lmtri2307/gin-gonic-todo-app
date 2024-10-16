@@ -12,6 +12,7 @@ type router struct {
 func (r *router) Init() {
 	group := r.engine.Group("/tasks")
 	group.GET("/hello-world", r.controller.helloWorld)
+	group.GET("/", r.controller.getAll)
 }
 
 func NewRouter(e *gin.Engine) *router {
