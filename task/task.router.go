@@ -13,6 +13,7 @@ func (r *router) Init() {
 	group := r.engine.Group("/tasks")
 	group.GET("/hello-world", r.controller.helloWorld)
 	group.GET("/", r.controller.getAll)
+	group.GET("/:id", r.controller.getById)
 }
 
 func NewRouter(e *gin.Engine) *router {
