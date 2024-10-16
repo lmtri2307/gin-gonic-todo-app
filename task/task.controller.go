@@ -76,6 +76,25 @@ func (c *controller) updateById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, task)
 }
 
+func (c *controller) deleteById(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Id"})
+		return
+	}
+
+	err = c.service.DeleteById(id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Task Not Found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{})
+
+}
+
 func newController() *controller {
 	service := NewService()
 	controller := controller{service}

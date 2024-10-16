@@ -38,6 +38,10 @@ func (s *service) UpdateById(id int, payload UpdateRequest) (*Task, error) {
 	return task, nil
 }
 
+func (s *service) DeleteById(id int) error {
+	return s.repository.deleteById(id)
+}
+
 func NewService() *service {
 	repository := NewRepository()
 	service := service{repository}

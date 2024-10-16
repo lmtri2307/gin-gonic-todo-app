@@ -40,6 +40,17 @@ func (r *repository) save(task *Task) (*Task, error) {
 	return nil, errors.New("task not found")
 }
 
+func (r *repository) deleteById(id int) error {
+	for index, task := range tasks {
+		if task.ID == id {
+			tasks = append(tasks[:index], tasks[index+1:]...)
+			return nil
+		}
+	}
+
+	return errors.New("Task Not Found")
+}
+
 func NewRepository() *repository {
 	repository := repository{}
 	return &repository
