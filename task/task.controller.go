@@ -12,12 +12,12 @@ type controller struct {
 }
 
 func (c *controller) helloWorld(ctx *gin.Context) {
-	ctx.IndentedJSON(http.StatusOK, c.service.HelloWorld())
+	ctx.JSON(http.StatusOK, c.service.HelloWorld())
 }
 
 func (c *controller) getAll(ctx *gin.Context) {
 	tasks := c.service.GetAll()
-	ctx.IndentedJSON(http.StatusOK, tasks)
+	ctx.JSON(http.StatusOK, tasks)
 }
 
 func (c *controller) getById(ctx *gin.Context) {
@@ -30,10 +30,10 @@ func (c *controller) getById(ctx *gin.Context) {
 	}
 	task, err := c.service.GetById(id)
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.IndentedJSON(http.StatusOK, task)
+	ctx.JSON(http.StatusOK, task)
 }
 
 func newController() *controller {
