@@ -24,6 +24,12 @@ func (*repository) getById(id int) (*Task, error) {
 	return nil, errors.New("Task not found")
 }
 
+func (*repository) saveNew(payload CreateRequest) (*Task, error) {
+	task := Task{len(tasks) + 1, payload.Description}
+	tasks = append(tasks, task)
+	return &task, nil
+}
+
 func NewRepository() *repository {
 	repository := repository{}
 	return &repository

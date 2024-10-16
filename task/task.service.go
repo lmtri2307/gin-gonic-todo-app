@@ -20,6 +20,11 @@ func (s *service) GetById(id int) (*Task, error) {
 	return task, nil
 }
 
+func (s *service) Create(payload CreateRequest) (*Task, error) {
+	task, err := s.repository.saveNew(payload)
+	return task, err
+}
+
 func NewService() *service {
 	repository := NewRepository()
 	service := service{repository}

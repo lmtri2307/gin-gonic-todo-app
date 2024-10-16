@@ -14,6 +14,7 @@ func (r *router) Init() {
 	group.GET("/hello-world", r.controller.helloWorld)
 	group.GET("/", r.controller.getAll)
 	group.GET("/:id", r.controller.getById)
+	group.POST("/", r.controller.create)
 }
 
 func NewRouter(e *gin.Engine) *router {

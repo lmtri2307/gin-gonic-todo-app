@@ -1,6 +1,7 @@
 package task
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -33,6 +34,22 @@ func (c *controller) getById(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
+	ctx.JSON(http.StatusOK, task)
+}
+
+func (c *controller) create(ctx *gin.Context) {
+	var createRequest CreateRequest
+	if err := ctx.BindJSON(&createRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": errors.New("invalid task payload").Error()})
+		return
+	}
+
+	task, err := c.service.Create(createRequest)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errors.New("internal server error"))
+		return
+	}
+
 	ctx.JSON(http.StatusOK, task)
 }
 
