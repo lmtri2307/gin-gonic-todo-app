@@ -9,6 +9,6 @@ type (
 		AccessToken string `json:"accessToken"`
 	}
 	TokenPayload struct {
-		id int
+		Id int
 	}
 )

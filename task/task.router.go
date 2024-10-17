@@ -1,6 +1,8 @@
 package task
 
 import (
+	"go-todo-app/auth"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,6 +13,7 @@ type router struct {
 
 func (r *router) Init() {
 	group := r.engine.Group("/tasks")
+	group.Use(auth.JwtAuthMiddleware)
 	group.GET("/hello-world", r.controller.helloWorld)
 	group.GET("/", r.controller.getAll)
 	group.GET("/:id", r.controller.getById)

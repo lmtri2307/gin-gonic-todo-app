@@ -19,3 +19,20 @@ func CreateToken(payload any, secret string, expiry int) (string, error) {
 	}
 	return t, err
 }
+
+func VerifyToken(tokenString string, secret string) (any, error) {
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		hmacSampleSecret := []byte(secret)
+		return hmacSampleSecret, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		return claims["payload"], nil
+	} else {
+		return nil, err
+	}
+}
