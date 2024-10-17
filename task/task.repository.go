@@ -11,12 +11,6 @@ type repository struct {
 	db *gorm.DB
 }
 
-var tasks = []Task{
-	{ID: 1, Description: "Task 1"},
-	{ID: 2, Description: "Task 2"},
-	{ID: 3, Description: "Task 3"},
-}
-
 func (r *repository) getAll() ([]Task, error) {
 	var tasks []Task
 	if err := r.db.Find(&tasks).Error; err != nil {
@@ -43,14 +37,11 @@ func (r *repository) save(task *Task) (*Task, error) {
 }
 
 func (r *repository) deleteById(id int) error {
-	for index, task := range tasks {
-		if task.ID == id {
-			tasks = append(tasks[:index], tasks[index+1:]...)
-			return nil
-		}
+	if err := r.db.Delete(&Task{}, id).Error; err != nil {
+		return errors.New("task not found")
 	}
 
-	return errors.New("Task Not Found")
+	return nil
 }
 
 func NewRepository() *repository {

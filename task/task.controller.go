@@ -91,7 +91,7 @@ func (c *controller) deleteById(ctx *gin.Context) {
 
 	err = c.service.DeleteById(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Task Not Found"})
+		ctx.JSON(http.StatusNotFound, err.Error())
 		return
 	}
 
