@@ -21,7 +21,7 @@ func (s *service) GetById(id int) (*Task, error) {
 }
 
 func (s *service) Create(payload CreateRequest) (*Task, error) {
-	task, err := s.repository.saveNew(payload)
+	task, err := s.repository.create(payload)
 	return task, err
 }
 

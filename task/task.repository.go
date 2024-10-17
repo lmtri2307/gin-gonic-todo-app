@@ -34,9 +34,15 @@ func (r *repository) getById(id int) (*Task, error) {
 	return &task, nil
 }
 
-func (*repository) saveNew(payload CreateRequest) (*Task, error) {
-	task := Task{len(tasks) + 1, payload.Description}
-	tasks = append(tasks, task)
+func (r *repository) create(payload CreateRequest) (*Task, error) {
+	task := Task{
+		Description: payload.Description,
+	}
+
+	if err := r.db.Create(&task).Error; err != nil {
+		return nil, errors.New("internal error")
+	}
+
 	return &task, nil
 }
 
