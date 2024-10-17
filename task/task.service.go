@@ -1,5 +1,7 @@
 package task
 
+import "errors"
+
 type service struct {
 	repository *repository
 }
@@ -8,20 +10,16 @@ func (*service) HelloWorld() string {
 	return "Hello world"
 }
 
-func (s *service) GetAll() []Task {
+func (s *service) GetAll() ([]Task, error) {
 	return s.repository.getAll()
 }
 
 func (s *service) GetById(id int) (*Task, error) {
-	task, err := s.repository.getById(id)
-	if err != nil {
-		return nil, err
-	}
-	return task, nil
+	return s.repository.getById(id)
 }
 
 func (s *service) Create(payload CreateRequest) (*Task, error) {
-	task, err := s.repository.saveNew(payload)
+	task, err := s.repository.save(&Task{Description: payload.Description})
 	return task, err
 }
 
@@ -39,6 +37,11 @@ func (s *service) UpdateById(id int, payload UpdateRequest) (*Task, error) {
 }
 
 func (s *service) DeleteById(id int) error {
+	_, err := s.repository.getById(id)
+	if err != nil {
+		return errors.New("task not found")
+	}
+
 	return s.repository.deleteById(id)
 }
 

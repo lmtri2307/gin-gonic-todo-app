@@ -16,7 +16,11 @@ func (c *controller) helloWorld(ctx *gin.Context) {
 }
 
 func (c *controller) getAll(ctx *gin.Context) {
-	tasks := c.service.GetAll()
+	tasks, err := c.service.GetAll()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 	ctx.JSON(http.StatusOK, tasks)
 }
 
@@ -69,7 +73,7 @@ func (c *controller) updateById(ctx *gin.Context) {
 
 	task, err := c.service.UpdateById(id, updateRequest)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -87,7 +91,7 @@ func (c *controller) deleteById(ctx *gin.Context) {
 
 	err = c.service.DeleteById(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Task Not Found"})
+		ctx.JSON(http.StatusNotFound, err.Error())
 		return
 	}
 

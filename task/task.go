@@ -1,6 +1,6 @@
 package task
 
 type Task struct {
-	ID          int    `json:"id"`
+	ID          int    `gorm:"primaryKey;autoIncrement" json:"id"`
 	Description string `json:"description"`
 }
