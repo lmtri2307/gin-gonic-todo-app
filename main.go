@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-todo-app/base"
 	"go-todo-app/task"
 	"log"
 
@@ -14,6 +15,7 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 	ginRouter := gin.Default()
+	ginRouter.Use(base.ErrorHandler)
 	task.NewRouter(ginRouter).Init()
 
 	ginRouter.Run("localhost:3000")

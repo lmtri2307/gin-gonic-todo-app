@@ -1,7 +1,6 @@
 package task
 
 import (
-	"errors"
 	"go-todo-app/database"
 
 	"gorm.io/gorm"
@@ -13,35 +12,29 @@ type repository struct {
 
 func (r *repository) getAll() ([]Task, error) {
 	var tasks []Task
-	if err := r.db.Find(&tasks).Error; err != nil {
-		return nil, errors.New("internal error")
-	}
-	return tasks, nil
+	err := r.db.Find(&tasks).Error
+	return tasks, err
 }
 
 func (r *repository) getById(id int) (*Task, error) {
 	var task Task
 	if err := r.db.First(&task, id).Error; err != nil {
-		return nil, errors.New("task not found")
+		return nil, &Errors.NotFound
 	}
 
 	return &task, nil
 }
 
 func (r *repository) save(task *Task) (*Task, error) {
-	if err := r.db.Save(task).Error; err != nil {
-		return nil, errors.New("internal error")
-	}
+	err := r.db.Save(task).Error
 
-	return task, nil
+	return task, err
 }
 
 func (r *repository) deleteById(id int) error {
-	if err := r.db.Delete(&Task{}, id).Error; err != nil {
-		return errors.New("task not found")
-	}
+	err := r.db.Delete(&Task{}, id).Error
 
-	return nil
+	return err
 }
 
 func NewRepository() *repository {
