@@ -1,18 +1,15 @@
 package database
 
 import (
+	"go-todo-app/utils/envutil"
 	"log"
-	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func Init() *gorm.DB {
-	dbURL, isPresent := os.LookupEnv("DB_POSTGRES_URL")
-	if !isPresent {
-		log.Fatalf("Missing Postgres DB Url")
-	}
+	dbURL := envutil.GetEvnVariable("DB_POSTGRES_URL")
 
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 

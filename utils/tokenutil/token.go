@@ -7,7 +7,7 @@ import (
 )
 
 func CreateToken(payload any, secret string, expiry int) (string, error) {
-	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
+	exp := time.Now().Add(time.Second * time.Duration(expiry)).Unix()
 	claims := jwt.MapClaims{
 		"payload": payload,
 		"exp":     exp,

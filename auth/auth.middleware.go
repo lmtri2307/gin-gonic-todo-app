@@ -1,11 +1,14 @@
 package auth
 
 import (
-	"go-todo-app/utils/tokenutil"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
+
+type Middleware struct {
+	service *service
+}
 
 func toPayload(rawPayload any) (*TokenPayload, error) {
 	payloadMap, ok := rawPayload.(map[string]interface{})
@@ -23,7 +26,8 @@ func toPayload(rawPayload any) (*TokenPayload, error) {
 
 	return &payload, nil
 }
-func JwtAuthMiddleware(c *gin.Context) {
+
+func (m *Middleware) JwtAuthMiddleware(c *gin.Context) {
 	authHeader := c.Request.Header.Get("Authorization")
 	splitedStrings := strings.Split(authHeader, " ")
 
@@ -34,20 +38,18 @@ func JwtAuthMiddleware(c *gin.Context) {
 	}
 
 	authToken := splitedStrings[1]
-	rawPayload, err := tokenutil.VerifyToken(authToken, "secret")
+	payload, err := m.service.verifyToken(authToken)
 	if err != nil {
-		c.Error(&Errors.InvalidToken)
-		c.Abort()
-		return
-	}
-
-	payload, err := toPayload(rawPayload)
-	if err != nil {
-		c.Error(&Errors.InvalidToken)
+		c.Error(err)
 		c.Abort()
 		return
 	}
 
 	c.Set("x-user-id", payload.Id)
 	c.Next()
+}
+
+func NewMiddleware() *Middleware {
+	service := NewService()
+	return &Middleware{service}
 }
