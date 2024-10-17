@@ -1,6 +1,7 @@
 package task
 
 import (
+	"go-todo-app/base"
 	"net/http"
 	"strconv"
 
@@ -12,16 +13,17 @@ type controller struct {
 }
 
 func (c *controller) helloWorld(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, c.service.HelloWorld())
+	ctx.JSON(base.NewApiMessage(http.StatusOK, c.service.HelloWorld()))
 }
 
 func (c *controller) getAll(ctx *gin.Context) {
 	tasks, err := c.service.GetAll()
+
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+		ctx.Error(err)
 		return
 	}
-	ctx.JSON(http.StatusOK, tasks)
+	ctx.JSON(base.NewApiMessage(http.StatusOK, tasks))
 }
 
 func (c *controller) getById(ctx *gin.Context) {
@@ -29,31 +31,32 @@ func (c *controller) getById(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		ctx.Error(&Errors.InvalidId)
 		return
 	}
 	task, err := c.service.GetById(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.Error(err)
 		return
 	}
-	ctx.JSON(http.StatusOK, task)
+	ctx.JSON(base.NewApiMessage(http.StatusOK, task))
 }
 
 func (c *controller) create(ctx *gin.Context) {
 	var createRequest CreateRequest
 	if err := ctx.BindJSON(&createRequest); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Task Payload"})
+
+		ctx.Error(&Errors.InvalidId)
 		return
 	}
 
 	task, err := c.service.Create(createRequest)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, task)
+	ctx.JSON(base.NewApiMessage(http.StatusOK, task))
 }
 
 func (c *controller) updateById(ctx *gin.Context) {
@@ -61,23 +64,23 @@ func (c *controller) updateById(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Id"})
+		ctx.Error(&Errors.InvalidId)
 		return
 	}
 
 	var updateRequest UpdateRequest
 	if err := ctx.BindJSON(&updateRequest); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Update Payload"})
+		ctx.Error(&Errors.InvalidUpdatePayload)
 		return
 	}
 
 	task, err := c.service.UpdateById(id, updateRequest)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, task)
+	ctx.JSON(base.NewApiMessage(http.StatusOK, task))
 }
 
 func (c *controller) deleteById(ctx *gin.Context) {
@@ -85,17 +88,17 @@ func (c *controller) deleteById(ctx *gin.Context) {
 
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Id"})
+		ctx.Error(&Errors.InvalidId)
 		return
 	}
 
 	err = c.service.DeleteById(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, err.Error())
+		ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{})
+	ctx.JSON(base.NewApiMessage(http.StatusOK, true))
 
 }
 

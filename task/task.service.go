@@ -1,7 +1,5 @@
 package task
 
-import "errors"
-
 type service struct {
 	repository *repository
 }
@@ -39,7 +37,7 @@ func (s *service) UpdateById(id int, payload UpdateRequest) (*Task, error) {
 func (s *service) DeleteById(id int) error {
 	_, err := s.repository.getById(id)
 	if err != nil {
-		return errors.New("task not found")
+		return &Errors.NotFound
 	}
 
 	return s.repository.deleteById(id)
