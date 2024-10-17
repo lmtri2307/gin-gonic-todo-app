@@ -2,10 +2,10 @@ package user
 
 type (
 	RegisterUserRequest struct {
-		UserName string `json:"userName" binding:"required"`
-		PassWord string `json:"passWord" binding:"required"`
+		UserName string `json:"username" binding:"required"`
+		PassWord string `json:"password" binding:"required"`
 	}
 	RegisterUserResponse struct {
-		UserName string `json:"userName"`
+		UserName string `json:"username"`
 	}
 )

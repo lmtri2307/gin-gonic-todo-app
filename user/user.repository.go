@@ -15,6 +15,14 @@ func (r *repository) save(user *User) (*User, error) {
 	return user, err
 }
 
+func (r *repository) findByUsername(username string) (*User, error) {
+	var user User
+	if err := r.db.Where(&User{UserName: username}).First(&user).Error; err != nil {
+		return nil, &Errors.NotFound
+	}
+	return &user, nil
+}
+
 func NewRepository() *repository {
 	db := database.Init()
 	repository := repository{db}

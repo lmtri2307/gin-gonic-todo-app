@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"go-todo-app/base"
@@ -8,24 +8,24 @@ import (
 )
 
 type controller struct {
-	service *Service
+	service *service
 }
 
-func (c *controller) register(ctx *gin.Context) {
-	var request RegisterUserRequest
+func (c *controller) login(ctx *gin.Context) {
+	var request LoginRequest
 
 	if err := ctx.BindJSON(&request); err != nil {
-		ctx.Error(&Errors.InvalidRegisterPayload)
+		ctx.Error(&Errors.InvalidLoginRequest)
 		return
 	}
 
-	res, err := c.service.Register(request)
+	res, err := c.service.login(request)
 	if err != nil {
 		ctx.Error(err)
 		return
 	}
 
-	ctx.JSON(base.NewApiMessage(http.StatusCreated, res))
+	ctx.JSON(base.NewApiMessage(http.StatusOK, res))
 }
 
 func newController() *controller {
