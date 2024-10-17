@@ -20,18 +20,18 @@ var tasks = []Task{
 func (r *repository) getAll() ([]Task, error) {
 	var tasks []Task
 	if err := r.db.Find(&tasks).Error; err != nil {
-		return nil, errors.New("Internal Error")
+		return nil, errors.New("internal error")
 	}
 	return tasks, nil
 }
 
-func (*repository) getById(id int) (*Task, error) {
-	for _, task := range tasks {
-		if task.ID == id {
-			return &task, nil
-		}
+func (r *repository) getById(id int) (*Task, error) {
+	var task Task
+	if err := r.db.First(&task, id).Error; err != nil {
+		return nil, errors.New("task not found")
 	}
-	return nil, errors.New("Task not found")
+
+	return &task, nil
 }
 
 func (*repository) saveNew(payload CreateRequest) (*Task, error) {
