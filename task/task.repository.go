@@ -1,8 +1,14 @@
 package task
 
-import "errors"
+import (
+	"errors"
+	"go-todo-app/database"
+
+	"gorm.io/gorm"
+)
 
 type repository struct {
+	db *gorm.DB
 }
 
 var tasks = []Task{
@@ -11,8 +17,12 @@ var tasks = []Task{
 	{ID: 3, Description: "Task 3"},
 }
 
-func (*repository) getAll() []Task {
-	return tasks
+func (r *repository) getAll() ([]Task, error) {
+	var tasks []Task
+	if err := r.db.Find(&tasks).Error; err != nil {
+		return nil, errors.New("Internal Error")
+	}
+	return tasks, nil
 }
 
 func (*repository) getById(id int) (*Task, error) {
@@ -52,6 +62,9 @@ func (r *repository) deleteById(id int) error {
 }
 
 func NewRepository() *repository {
-	repository := repository{}
+	db := database.Init()
+	repository := repository{db}
+	db.AutoMigrate(&Task{})
+
 	return &repository
 }

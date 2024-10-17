@@ -8,7 +8,7 @@ func (*service) HelloWorld() string {
 	return "Hello world"
 }
 
-func (s *service) GetAll() []Task {
+func (s *service) GetAll() ([]Task, error) {
 	return s.repository.getAll()
 }
 

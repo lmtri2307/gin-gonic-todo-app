@@ -16,7 +16,11 @@ func (c *controller) helloWorld(ctx *gin.Context) {
 }
 
 func (c *controller) getAll(ctx *gin.Context) {
-	tasks := c.service.GetAll()
+	tasks, err := c.service.GetAll()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 	ctx.JSON(http.StatusOK, tasks)
 }
 
