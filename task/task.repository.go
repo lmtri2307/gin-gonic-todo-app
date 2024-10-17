@@ -34,26 +34,12 @@ func (r *repository) getById(id int) (*Task, error) {
 	return &task, nil
 }
 
-func (r *repository) create(payload CreateRequest) (*Task, error) {
-	task := Task{
-		Description: payload.Description,
-	}
-
-	if err := r.db.Create(&task).Error; err != nil {
+func (r *repository) save(task *Task) (*Task, error) {
+	if err := r.db.Save(task).Error; err != nil {
 		return nil, errors.New("internal error")
 	}
 
-	return &task, nil
-}
-
-func (r *repository) save(task *Task) (*Task, error) {
-	for index, oldTask := range tasks {
-		if oldTask.ID == task.ID {
-			tasks[index].Description = task.Description
-			return &tasks[index], nil
-		}
-	}
-	return nil, errors.New("task not found")
+	return task, nil
 }
 
 func (r *repository) deleteById(id int) error {

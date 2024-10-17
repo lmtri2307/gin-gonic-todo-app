@@ -73,7 +73,7 @@ func (c *controller) updateById(ctx *gin.Context) {
 
 	task, err := c.service.UpdateById(id, updateRequest)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
