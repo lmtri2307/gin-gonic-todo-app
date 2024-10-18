@@ -1,6 +1,8 @@
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	ID             int    `gorm:"primaryKey;autoIncrement" json:"id"`

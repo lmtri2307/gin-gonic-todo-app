@@ -10,19 +10,22 @@ type repository struct {
 	db *gorm.DB
 }
 
-func (r *repository) getAll() ([]Task, error) {
+func (r *repository) getAll(userId int) ([]Task, error) {
 	var tasks []Task
-	err := r.db.Find(&tasks).Error
+	err := r.db.Where("user_id = ?", userId).Find(&tasks).Error
 	return tasks, err
 }
 
-func (r *repository) getById(id int) (*Task, error) {
-	var task Task
-	if err := r.db.First(&task, id).Error; err != nil {
-		return nil, &Errors.NotFound
-	}
+func (r *repository) getById(id int, userId int) (*Task, error) {
+	// var task Task
+	// if err := r.db.First(&task, id).Error; err != nil {
+	// 	return nil, &Errors.NotFound
+	// }
 
-	return &task, nil
+	// return &task, nil
+	var task Task
+	err := r.db.Where("id = ? AND user_id = ?", id, userId).First(&task).Error
+	return &task, err
 }
 
 func (r *repository) save(task *Task) (*Task, error) {
@@ -31,8 +34,8 @@ func (r *repository) save(task *Task) (*Task, error) {
 	return task, err
 }
 
-func (r *repository) deleteById(id int) error {
-	err := r.db.Delete(&Task{}, id).Error
+func (r *repository) deleteById(id int, userId int) error {
+	err := r.db.Where("id = ? AND user_id = ?", id, userId).Delete(&Task{}).Error
 
 	return err
 }

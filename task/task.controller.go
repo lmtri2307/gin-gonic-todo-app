@@ -12,12 +12,18 @@ type controller struct {
 	service *service
 }
 
+func getUserId(c *gin.Context) int {
+	userId := c.MustGet("x-user-id").(int)
+	return userId
+}
+
 func (c *controller) helloWorld(ctx *gin.Context) {
 	ctx.JSON(base.NewApiMessage(http.StatusOK, c.service.HelloWorld()))
 }
 
 func (c *controller) getAll(ctx *gin.Context) {
-	tasks, err := c.service.GetAll()
+	userId := getUserId(ctx)
+	tasks, err := c.service.GetAll(userId)
 
 	if err != nil {
 		ctx.Error(err)
@@ -27,6 +33,7 @@ func (c *controller) getAll(ctx *gin.Context) {
 }
 
 func (c *controller) getById(ctx *gin.Context) {
+	userId := getUserId(ctx)
 	idParam := ctx.Param("id")
 
 	id, err := strconv.Atoi(idParam)
@@ -34,7 +41,7 @@ func (c *controller) getById(ctx *gin.Context) {
 		ctx.Error(&Errors.InvalidId)
 		return
 	}
-	task, err := c.service.GetById(id)
+	task, err := c.service.GetById(id, userId)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -43,6 +50,8 @@ func (c *controller) getById(ctx *gin.Context) {
 }
 
 func (c *controller) create(ctx *gin.Context) {
+	userId := getUserId(ctx)
+
 	var createRequest CreateRequest
 	if err := ctx.BindJSON(&createRequest); err != nil {
 
@@ -50,7 +59,7 @@ func (c *controller) create(ctx *gin.Context) {
 		return
 	}
 
-	task, err := c.service.Create(createRequest)
+	task, err := c.service.Create(createRequest, userId)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -60,6 +69,8 @@ func (c *controller) create(ctx *gin.Context) {
 }
 
 func (c *controller) updateById(ctx *gin.Context) {
+	userId := getUserId(ctx)
+
 	idParam := ctx.Param("id")
 
 	id, err := strconv.Atoi(idParam)
@@ -74,7 +85,7 @@ func (c *controller) updateById(ctx *gin.Context) {
 		return
 	}
 
-	task, err := c.service.UpdateById(id, updateRequest)
+	task, err := c.service.UpdateById(id, updateRequest, userId)
 	if err != nil {
 		ctx.Error(err)
 		return
@@ -84,6 +95,8 @@ func (c *controller) updateById(ctx *gin.Context) {
 }
 
 func (c *controller) deleteById(ctx *gin.Context) {
+	userId := getUserId(ctx)
+
 	idParam := ctx.Param("id")
 
 	id, err := strconv.Atoi(idParam)
@@ -92,7 +105,7 @@ func (c *controller) deleteById(ctx *gin.Context) {
 		return
 	}
 
-	err = c.service.DeleteById(id)
+	err = c.service.DeleteById(id, userId)
 	if err != nil {
 		ctx.Error(err)
 		return
